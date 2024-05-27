@@ -1,0 +1,14 @@
+[package]
+name = "connected_enet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+enet = { package = "rusty_enet", git = "https://github.com/jabuwu/rusty_enet", rev = "ff11f54bd9e560aca6ba54b3b1e0421d85d6d384" }
+
+[workspace]
+resolver = "2"
+members = [
+    "ci"
+]
+
