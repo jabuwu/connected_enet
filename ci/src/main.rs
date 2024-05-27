@@ -49,10 +49,10 @@ fn main() -> anyhow::Result<()> {
 
     let sh = Shell::new()?;
     if what_to_run.contains(Check::CHECK) {
-        check(&sh, Target::Default)?;
+        check(&sh, Target::Default, Features(&["webrtc"]))?;
     }
     if what_to_run.contains(Check::WASM_CHECK) {
-        check(&sh, Target::Wasm)?;
+        check(&sh, Target::Wasm, Features(&["webrtc"]))?;
     }
     if what_to_run.contains(Check::EXAMPLE_CHECK) {
         example_check(&sh)?;
@@ -75,15 +75,26 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn check(sh: &Shell, target: Target) -> anyhow::Result<()> {
+fn check(sh: &Shell, target: Target, features: Features) -> anyhow::Result<()> {
     let target_flags = &target.flags();
-    cmd!(sh, "cargo rustc {target_flags...} -- -D warnings").run()?;
+    let feature_combination_flags = features.combination_flags();
+    for feature_flags in feature_combination_flags.iter() {
+        cmd!(
+            sh,
+            "cargo rustc {target_flags...} {feature_flags...} -- -D warnings"
+        )
+        .run()?;
+    }
     Ok(())
 }
 
 fn example_check(sh: &Shell) -> anyhow::Result<()> {
     for example in ["read_write", "tcp"] {
-        cmd!(sh, "cargo rustc --example {example} -- -D warnings").run()?;
+        cmd!(
+            sh,
+            "cargo rustc --example {example} --features webrtc -- -D warnings"
+        )
+        .run()?;
     }
     Ok(())
 }
@@ -114,6 +125,10 @@ fn doc_check(sh: &Shell) -> anyhow::Result<()> {
 }
 
 fn clippy(sh: &Shell) -> anyhow::Result<()> {
-    cmd!(sh, "cargo clippy --workspace --all-targets -- -D warnings").run()?;
+    cmd!(
+        sh,
+        "cargo clippy --workspace --all-targets --features webrtc -- -D warnings"
+    )
+    .run()?;
     Ok(())
 }

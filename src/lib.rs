@@ -1187,3 +1187,35 @@ impl Connection for TcpStream {
         }
     }
 }
+
+#[cfg(feature = "webrtc")]
+impl Connection for simple_webrtc_channel::DataChannel {
+    type Address = ();
+    type Error = simple_webrtc_channel::Error;
+
+    fn init(&mut self) -> Result<Self::Address, Self::Error> {
+        Ok(())
+    }
+
+    fn send(&mut self, buffer: &[u8]) -> Result<usize, Self::Error> {
+        simple_webrtc_channel::DataChannel::send(self, buffer.to_vec());
+        Ok(buffer.len())
+    }
+
+    fn receive(
+        &mut self,
+        buffer: &mut [u8; enet::MTU_MAX],
+    ) -> Result<Option<enet::PacketReceived>, Self::Error> {
+        use std::io::{copy, Cursor};
+        (simple_webrtc_channel::DataChannel::receive(self)?).map_or(Ok(None), |message| {
+            let message_length = message.len();
+            if message_length <= enet::MTU_MAX {
+                copy(&mut Cursor::new(message), &mut Cursor::new(&mut buffer[..]))
+                    .expect("Buffer copy should not fail.");
+                Ok(Some(enet::PacketReceived::Complete(message_length)))
+            } else {
+                Ok(None)
+            }
+        })
+    }
+}
