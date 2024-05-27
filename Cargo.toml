@@ -9,11 +9,11 @@ webrtc = ["dep:simple_webrtc_channel"]
 
 [dependencies]
 enet = { package = "rusty_enet", git = "https://github.com/jabuwu/rusty_enet", rev = "ff11f54bd9e560aca6ba54b3b1e0421d85d6d384" }
-simple_webrtc_channel = { git = "https://github.com/jabuwu/simple_webrtc_channel", rev = "46cd4fd74b0ff662ec6a5f209c727ea85b5a48e2", default-features = false, optional = true }
+simple_webrtc_channel = { git = "https://github.com/jabuwu/simple_webrtc_channel", rev = "5218d1753e232713811b6ac6f05070bf83db32b9", default-features = false, optional = true }
 
 [dev-dependencies]
 local-ip-address = "0.6.1"
-simple_webrtc_channel = { git = "https://github.com/jabuwu/simple_webrtc_channel", rev = "46cd4fd74b0ff662ec6a5f209c727ea85b5a48e2", default-features = true }
+simple_webrtc_channel = { git = "https://github.com/jabuwu/simple_webrtc_channel", rev = "5218d1753e232713811b6ac6f05070bf83db32b9", default-features = true }
 
 [workspace]
 resolver = "2"
